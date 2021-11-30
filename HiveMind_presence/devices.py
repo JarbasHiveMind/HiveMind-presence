@@ -1,24 +1,23 @@
-import requests
+from uuid import uuid4
+
 from hivemind_bus_client import HiveMessageBusClient
-from HiveMind_presence.utils import LOG, xml2dict
 
 
-class Device:
-    def __init__(self, host, device_type='HiveMind-websocket'):
+class AbstractDevice:
+    def __init__(self, host, port, device_type, ssl=False, name="HiveMind Node"):
         self.host = host
+        self.port = port
+        self.ssl = ssl
         self.device_type = device_type
+        self.name = name
 
     @property
     def services(self):
         return {}
 
     @property
-    def location(self):
-        return None
-
-    @property
     def device_name(self):
-        return self.host
+        return self.name
 
     @property
     def friendly_name(self):
@@ -33,35 +32,24 @@ class Device:
         return self.device_type
 
     @property
-    def model_number(self):
-        return "0.1"
-
-    @property
     def udn(self):
-        return self.model_name + ":" + self.model_number
+        return f"{self.model_name}:{uuid4()}"
 
     @property
     def address(self):
-        return self.location
+        return self.host + ":" + str(self.port)
 
     @property
     def data(self):
         return {"host": self.host,
+                "port": self.port,
+                "ssl": self.ssl,
                 "type": self.device_type}
 
 
 class HiveMindNode:
     def __init__(self, d=None):
         self.device = d
-        self._data = None
-
-    @property
-    def services(self):
-        return self.device.service_map
-
-    @property
-    def xml(self):
-        return self.device.location
 
     @property
     def device_name(self):
@@ -80,41 +68,20 @@ class HiveMindNode:
         return self.device.model_name
 
     @property
-    def version(self):
-        return self.device.model_number
-
-    @property
     def device_id(self):
         return self.device.udn
 
     @property
-    def data(self):
-        if self.xml and self._data is None:
-            LOG.info(f"Fetching Node data: {self.xml}")
-            xml = requests.get(self.xml).text
-            self._data = xml2dict(xml)
-        return self._data
-
-    @property
     def address(self):
-        try:
-            if self.device.location:
-                services = self.data["root"]["device"]['serviceList']
-                for service in services.values():
-                    if service["serviceType"] == \
-                            'urn:jarbasAi:HiveMind:service:Master':
-                        return service["URLBase"]
-        except:
-            pass
-        return self.device.data.get("host")
+        return self.device.address
 
     @property
     def host(self):
-        return ":".join(self.address.split(":")[:-1])
+        return self.device.host
 
     @property
     def port(self):
-        return int(self.address.split(":")[-1])
+        return int(self.device.port)
 
     def connect(self, key, crypto_key=None, self_signed=True):
         ssl = self.address.startswith("wss://") or \

@@ -3,10 +3,12 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from time import sleep
 from uuid import uuid4
 
+import requests
 import upnpclient
 
-from HiveMind_presence.devices import HiveMindNode
+from HiveMind_presence.devices import HiveMindNode, AbstractDevice
 from HiveMind_presence.ssdp import SSDPServer
+from HiveMind_presence.utils import LOG, xml2dict
 from HiveMind_presence.utils import get_ip
 
 PORT_NUMBER = 8080
@@ -168,16 +170,37 @@ class UPNPScanner(threading.Thread):
     def on_node_update(self, node):
         self.nodes[node.address] = node
 
+    def _get_device_data(self, location):
+        LOG.info(f"Fetching Node data: {location}")
+        xml = requests.get(location).text
+        data = xml2dict(xml)
+        services = data["root"]["device"]['serviceList']
+        for service in services.values():
+            if service["serviceType"] == \
+                    'urn:jarbasAi:HiveMind:service:Master':
+                data["address"] = service["URLBase"]
+                break
+        return data
+
     def run(self) -> None:
         self.running = True
+        seen = []
         while self.running:
             devices = upnpclient.discover()
             for d in devices:
                 if d.location in self.nodes:
                     continue
                 if d.model_name == "HiveMind-core":
-                    node = HiveMindNode(d)
-                    self.on_new_node(node)
+                    data = self._get_device_data(d.location)
+                    host, port = data["address"].split(":")
+                    device = AbstractDevice(name=data["root"]['device']['friendlyName'],
+                                            host=host,
+                                            port=port,
+                                            device_type=data["root"]['device']['modelName'])
+                    node = HiveMindNode(device)
+                    if node.address not in seen:
+                        seen.append(node.address)
+                        self.on_new_node(node)
             sleep(1)
         self.stop()
 
@@ -203,8 +226,6 @@ class UPNPAnnounce:
         self.service_type = service_type
         self.host = host or get_ip()
         self.uuid = uuid or str(uuid4())
-        url = f"wss://{self.host}:{self.port}" if self.ssl \
-            else f"ws://{self.host}:{self.port}"
         self.upnp_server = UPNPHTTPServer(8088,
                                           friendly_name=self.name,
                                           manufacturer=manufacturer,
@@ -215,7 +236,7 @@ class UPNPAnnounce:
                                           model_url=model_url,
                                           serial_number=self.service_type,
                                           uuid=self.uuid,
-                                          presentation_url=url,
+                                          presentation_url=f"{self.host}:{self.port}",
                                           host=self.host)
         self.ssdp = SSDPServer()
         self.ssdp.register('local',

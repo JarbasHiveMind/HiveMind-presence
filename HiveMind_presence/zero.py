@@ -4,7 +4,7 @@ from uuid import uuid4
 from zeroconf import ServiceBrowser, ServiceStateChange
 from zeroconf import Zeroconf, ServiceInfo
 
-from HiveMind_presence.devices import HiveMindNode, Device
+from HiveMind_presence.devices import HiveMindNode, AbstractDevice
 from HiveMind_presence.utils import get_ip
 
 
@@ -13,6 +13,7 @@ class ZeroConfAnnounce:
                  uuid=None,
                  host=None,
                  port=5678,
+                 ssl=False,
                  service_type="HiveMind-websocket",
                  name="HiveMind-Node"):
         self.name = name
@@ -20,6 +21,7 @@ class ZeroConfAnnounce:
         self.service_type = service_type
         self.host = host or get_ip()
         self.uuid = uuid or str(uuid4())
+        self.ssl = ssl
 
         self.zero = None
         self.info = ServiceInfo(
@@ -32,11 +34,6 @@ class ZeroConfAnnounce:
                         "host": self.host,
                         "port": self.port},
         )
-
-    @property
-    def ssl(self):
-        return self.host.startswith("wss://") or \
-               self.host.startswith("https://")
 
     def start(self):
         """Start advertising to other devices about the ip address"""
@@ -73,12 +70,15 @@ class ZeroScanner:
         if state_change is ServiceStateChange.Added or state_change is \
                 ServiceStateChange.Updated:
             info = zeroconf.get_service_info(service_type, name)
-            node_data = {}
             if info and info.properties:
                 for key, value in info.properties.items():
                     if key == b"type" and value == b"HiveMind-websocket":
-                        node_data["address"] = info._properties[b"host"].decode("utf-8")
-                        node = HiveMindNode(Device(node_data["address"]))
+                        host = info._properties[b"host"].decode("utf-8")
+                        port = info._properties[b"port"].decode("utf-8")
+                        ssl = info._properties[b"ssl"].decode("utf-8")
+                        device = AbstractDevice(host, port,
+                                                'HiveMind-websocket', ssl)
+                        node = HiveMindNode(device)
                         if state_change is ServiceStateChange.Added:
                             self.on_new_node(node)
                         else:

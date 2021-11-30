@@ -7,6 +7,7 @@ from xml.etree import cElementTree as ET
 
 
 LOG = logging.getLogger("HiveMind-presence")
+LOG.setLevel("DEBUG")
 
 
 def get_ip():
