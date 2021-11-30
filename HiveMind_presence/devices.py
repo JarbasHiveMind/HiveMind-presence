@@ -10,6 +10,7 @@ class AbstractDevice:
         self.ssl = ssl
         self.device_type = device_type
         self.name = name
+        self.uuid = str(uuid4())
 
     @property
     def services(self):
@@ -33,11 +34,11 @@ class AbstractDevice:
 
     @property
     def udn(self):
-        return f"{self.model_name}:{uuid4()}"
+        return f"{self.model_name}:{self.uuid}"
 
     @property
     def address(self):
-        return self.host + ":" + str(self.port)
+        return f"{self.host}:{self.port}"
 
     @property
     def data(self):
@@ -83,14 +84,16 @@ class HiveMindNode:
     def port(self):
         return int(self.device.port)
 
+    @property
+    def ssl(self):
+        return self.device.ssl
+
     def connect(self, key, crypto_key=None, self_signed=True):
-        ssl = self.address.startswith("wss://") or \
-              self.address.startswith("https://")
         bus = HiveMessageBusClient(key=key,
                                    crypto_key=crypto_key,
                                    host=self.host, port=self.port,
                                    useragent=self.device_name,
-                                   ssl=ssl,
+                                   ssl=self.ssl,
                                    self_signed=self_signed)
         bus.run_in_thread()
         return bus

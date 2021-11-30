@@ -213,6 +213,7 @@ class UPNPAnnounce:
                  uuid=None,
                  host=None,
                  port=5678,
+                 ssl=False,
                  service_type="HiveMind-websocket",
                  name="HiveMind-Node",
                  manufacturer='JarbasAI',
@@ -226,6 +227,7 @@ class UPNPAnnounce:
         self.service_type = service_type
         self.host = host or get_ip()
         self.uuid = uuid or str(uuid4())
+        self.ssl = ssl
         self.upnp_server = UPNPHTTPServer(8088,
                                           friendly_name=self.name,
                                           manufacturer=manufacturer,
@@ -243,11 +245,6 @@ class UPNPAnnounce:
                            f'uuid:{self.uuid}::upnp:{self.service_type}',
                            f'upnp:{self.service_type}',
                            self.upnp_server.path)
-
-    @property
-    def ssl(self):
-        return self.host.startswith("wss://") or \
-               self.host.startswith("https://")
 
     def start(self):
         self.upnp_server.start()
