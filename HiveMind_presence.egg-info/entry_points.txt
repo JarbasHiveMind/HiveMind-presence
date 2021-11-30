@@ -1,0 +1,4 @@
+[console_scripts]
+HiveMind-database = jarbas_hive_mind.database.__main__:main
+HiveMind-server = jarbas_hive_mind.__main__:main
+
