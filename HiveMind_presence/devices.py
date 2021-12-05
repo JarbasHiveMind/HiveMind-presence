@@ -13,28 +13,8 @@ class AbstractDevice:
         self.uuid = str(uuid4())
 
     @property
-    def services(self):
-        return {}
-
-    @property
-    def device_name(self):
-        return self.name
-
-    @property
     def friendly_name(self):
-        return self.device_name
-
-    @property
-    def model_description(self):
-        return self.device_name
-
-    @property
-    def model_name(self):
-        return self.device_type
-
-    @property
-    def udn(self):
-        return f"{self.model_name}:{self.uuid}"
+        return self.name
 
     @property
     def address(self):
@@ -53,24 +33,8 @@ class HiveMindNode:
         self.device = d
 
     @property
-    def device_name(self):
-        return self.device.device_name
-
-    @property
     def friendly_name(self):
-        return self.device.friendly_name
-
-    @property
-    def description(self):
-        return self.device.model_description
-
-    @property
-    def node_type(self):
-        return self.device.model_name
-
-    @property
-    def device_id(self):
-        return self.device.udn
+        return self.device.name
 
     @property
     def address(self):
@@ -92,7 +56,7 @@ class HiveMindNode:
         bus = HiveMessageBusClient(key=key,
                                    crypto_key=crypto_key,
                                    host=self.host, port=self.port,
-                                   useragent=self.device_name,
+                                   useragent=self.friendly_name,
                                    ssl=self.ssl,
                                    self_signed=self_signed)
         bus.run_in_thread()

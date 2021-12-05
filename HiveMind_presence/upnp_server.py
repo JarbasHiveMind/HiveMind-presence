@@ -11,8 +11,6 @@ from HiveMind_presence.ssdp import SSDPServer
 from HiveMind_presence.utils import LOG, xml2dict
 from HiveMind_presence.utils import get_ip
 
-PORT_NUMBER = 8080
-
 
 class UPNPHTTPServerHandler(BaseHTTPRequestHandler):
     """
@@ -45,9 +43,12 @@ class UPNPHTTPServerHandler(BaseHTTPRequestHandler):
         return f"""<serviceList>
             <service>
                 <URLBase>{self.server.presentation_url}</URLBase>
-                <serviceType>urn:jarbasAi:HiveMind:service:Master</serviceType>
-                <serviceId>urn:jarbasAi:HiveMind:serviceId:HiveMindNode</serviceId>
+                <serviceType>urn:jarbasAi:HiveMind:service:{self.server.service_type}</serviceType>
+                <serviceId>urn:jarbasAi:HiveMind:serviceId:{self.server.name}</serviceId>
                 <controlURL>/HiveMind</controlURL>
+                <ssl>{self.server.ssl}</ssl>
+                <host>{self.server.host}</host>
+                <port>{self.server.port}</port>
                 <eventSubURL/>
                 <SCPDURL>{self.server.scpd_xml_path}</SCPDURL>
             </service>
@@ -65,14 +66,8 @@ class UPNPHTTPServerHandler(BaseHTTPRequestHandler):
             </specVersion>
             <device>
                 <deviceType>urn:schemas-upnp-org:device:Basic:1</deviceType>
-                <friendlyName>{self.server.friendly_name}</friendlyName>
-                <manufacturer>{self.server.manufacturer}</manufacturer>
-                <manufacturerURL>{self.server.manufacturer_url}</manufacturerURL>
-                <modelDescription>{self.server.model_description}</modelDescription>
-                <modelName>{self.server.model_name}</modelName>
-                <modelNumber>{self.server.model_number}</modelNumber>
-                <modelURL>{self.server.model_url}</modelURL>
-                <serialNumber>{self.server.serial_number}</serialNumber>
+                <friendlyName>{self.server.name}</friendlyName>
+                <modelName>HiveMind</modelName>
                 <UDN>uuid:{self.server.uuid}</UDN>
                 {self.services_xml}
                 <presentationURL>{self.server.presentation_url}</presentationURL>
@@ -84,10 +79,10 @@ class UPNPHTTPServerHandler(BaseHTTPRequestHandler):
         """
         Get the device WSD file.
         """
-        return """<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+        return f"""<scpd xmlns="urn:schemas-upnp-org:service-1-0">
             <specVersion>
-                <major>1</major>
-                <minor>0</minor>
+                <major>{self.server.major_version}</major>
+                <minor>{self.server.minor_version}</minor>
             </specVersion>
         </scpd>"""
 
@@ -99,20 +94,22 @@ class UPNPHTTPServerBase(HTTPServer):
 
     def __init__(self, server_address, request_handler_class):
         HTTPServer.__init__(self, server_address, request_handler_class)
-        self.port = None
-        self.friendly_name = None
-        self.manufacturer = None
-        self.manufacturer_url = None
-        self.model_description = None
-        self.model_name = None
-        self.model_url = None
-        self.serial_number = None
-        self.uuid = None
-        self.presentation_url = None
+        self.port = 5678
+        self.name = "HiveMind-Node"
+        self.service_type = "HiveMind-websocket"
+        self.host = get_ip()
+        self.ssl = False
+
+        self.uuid = str(uuid4())
         self.scpd_xml_path = None
         self.device_xml_path = None
-        self.major_version = None
-        self.minor_version = None
+        self.major_version = 0
+        self.minor_version = 1
+
+    @property
+    def presentation_url(self):
+        return f"wss://{self.host}:{self.port}" if self.ssl \
+            else f"ws://{self.host}:{self.port}"
 
 
 class UPNPHTTPServer(threading.Thread):
@@ -120,34 +117,39 @@ class UPNPHTTPServer(threading.Thread):
     A thread that runs UPNPHTTPServerBase.
     """
 
-    def __init__(self, port, friendly_name, manufacturer, manufacturer_url,
-                 model_description, model_name,
-                 model_number, model_url, serial_number, uuid,
-                 presentation_url, host=""):
+    def __init__(self, port=5678, friendly_name="HiveMind-Node", ssl=False,
+                 service_type="HiveMind-websocket", upnp_port=8088):
         threading.Thread.__init__(self, daemon=True)
-        self.server = UPNPHTTPServerBase(('', port), UPNPHTTPServerHandler)
+
+        self.server = UPNPHTTPServerBase(('', upnp_port), UPNPHTTPServerHandler)
         self.server.port = port
-        self.server.friendly_name = friendly_name
-        self.server.manufacturer = manufacturer
-        self.server.manufacturer_url = manufacturer_url
-        self.server.model_description = model_description
-        self.server.model_name = model_name
-        self.server.model_number = model_number
-        self.server.model_url = model_url
-        self.server.serial_number = serial_number
-        self.server.uuid = uuid
-        self.server.presentation_url = presentation_url
+        self.server.name = friendly_name
+        self.server.service_type = service_type
+        self.server.ssl = ssl
+
         self.server.scpd_xml_path = 'scpd.xml'
         self.server.device_xml_path = "device.xml"
         self.server.major_version = 0
         self.server.minor_version = 1
-        self.host = host
+
+    @property
+    def uuid(self):
+        return self.server.uuid
+
+    @property
+    def service_type(self):
+        return self.server.service_type
+
+    @property
+    def presentation_url(self):
+        return self.server.presentation_url
 
     @property
     def path(self):
-        return f'http://{self.host}:8088/{self.server.device_xml_path}'
+        return f'http://{self.server.host}:8088/{self.server.device_xml_path}'
 
     def run(self):
+        LOG.info(f"Announcing node via UPNP/SSDP: {self.path}")
         self.server.serve_forever()
 
     def shutdown(self):
@@ -170,17 +172,20 @@ class UPNPScanner(threading.Thread):
     def on_node_update(self, node):
         self.nodes[node.address] = node
 
-    def _get_device_data(self, location):
+    def _get_node_data(self, location, service_type="HiveMind-websocket"):
         LOG.info(f"Fetching Node data: {location}")
         xml = requests.get(location).text
         data = xml2dict(xml)
         services = data["root"]["device"]['serviceList']
         for service in services.values():
-            if service["serviceType"] == \
-                    'urn:jarbasAi:HiveMind:service:Master':
-                data["address"] = service["URLBase"]
-                break
-        return data
+            if service["serviceType"] == f'urn:jarbasAi:HiveMind:service:{service_type}':
+                return AbstractDevice(**{
+                    "device_type": service_type,
+                    "host": service["host"],
+                    "port": int(service["port"]),
+                    "ssl": service["ssl"] == "True",
+                    "name": data["root"]['device']['friendlyName']
+                })
 
     def run(self) -> None:
         self.running = True
@@ -190,13 +195,8 @@ class UPNPScanner(threading.Thread):
             for d in devices:
                 if d.location in self.nodes:
                     continue
-                if d.model_name == "HiveMind-core":
-                    data = self._get_device_data(d.location)
-                    host, port = data["address"].split(":")
-                    device = AbstractDevice(name=data["root"]['device']['friendlyName'],
-                                            host=host,
-                                            port=port,
-                                            device_type=data["root"]['device']['modelName'])
+                if "HiveMind" in d.model_name:
+                    device = self._get_node_data(d.location)
                     node = HiveMindNode(device)
                     if node.address not in seen:
                         seen.append(node.address)
@@ -210,46 +210,24 @@ class UPNPScanner(threading.Thread):
 
 class UPNPAnnounce:
     def __init__(self,
-                 uuid=None,
-                 host=None,
                  port=5678,
                  ssl=False,
                  service_type="HiveMind-websocket",
-                 name="HiveMind-Node",
-                 manufacturer='JarbasAI',
-                 manufacturer_url='https://github.com/JarbasHiveMind',
-                 model_description='Jarbas HiveMind',
-                 model_name="HiveMind-core",
-                 model_number="0.9",
-                 model_url="https://github.com/JarbasHiveMind/HiveMind-core"):
-        self.name = name
-        self.port = port
-        self.service_type = service_type
-        self.host = host or get_ip()
-        self.uuid = uuid or str(uuid4())
-        self.ssl = ssl
-        self.upnp_server = UPNPHTTPServer(8088,
-                                          friendly_name=self.name,
-                                          manufacturer=manufacturer,
-                                          manufacturer_url=manufacturer_url,
-                                          model_description=model_description,
-                                          model_name=model_name,
-                                          model_number=model_number,
-                                          model_url=model_url,
-                                          serial_number=self.service_type,
-                                          uuid=self.uuid,
-                                          presentation_url=f"{self.host}:{self.port}",
-                                          host=self.host)
+                 name="HiveMind-Node"):
+
+        self.upnp = UPNPHTTPServer(friendly_name=name,
+                                   service_type=service_type,
+                                   ssl=ssl, port=port)
         self.ssdp = SSDPServer()
         self.ssdp.register('local',
-                           f'uuid:{self.uuid}::upnp:{self.service_type}',
-                           f'upnp:{self.service_type}',
-                           self.upnp_server.path)
+                           f'uuid:{self.upnp.uuid}::upnp:{self.upnp.service_type}',
+                           f'upnp:{self.upnp.service_type}',
+                           self.upnp.path)
 
     def start(self):
-        self.upnp_server.start()
+        self.upnp.start()
         self.ssdp.start()
 
     def stop(self):
         self.ssdp.shutdown()
-        self.upnp_server.shutdown()
+        self.upnp.shutdown()
