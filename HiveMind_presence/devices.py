@@ -52,11 +52,12 @@ class HiveMindNode:
     def ssl(self):
         return self.device.ssl
 
-    def connect(self, key, crypto_key=None, self_signed=True):
+    def connect(self, key, crypto_key=None, self_signed=True,
+                useragent="HiveMind-websocket-client"):
         bus = HiveMessageBusClient(key=key,
                                    crypto_key=crypto_key,
                                    host=self.host, port=self.port,
-                                   useragent=self.friendly_name,
+                                   useragent=useragent,
                                    ssl=self.ssl,
                                    self_signed=self_signed)
         bus.run_in_thread()

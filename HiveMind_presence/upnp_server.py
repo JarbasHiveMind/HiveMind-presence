@@ -197,6 +197,8 @@ class UPNPScanner(threading.Thread):
                     continue
                 if "HiveMind" in d.model_name:
                     device = self._get_node_data(d.location)
+                    if not device:
+                        continue
                     node = HiveMindNode(device)
                     if node.address not in seen:
                         seen.append(node.address)
