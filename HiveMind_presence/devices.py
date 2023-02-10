@@ -7,7 +7,7 @@ class AbstractDevice:
     def __init__(self, host, port, device_type, ssl=False, name="HiveMind Node"):
         self.host = host
         self.port = port
-        self.ssl = ssl.lower() != "false" if not isinstance(ssl, bool) else ssl
+        self.ssl = ssl if isinstance(ssl, bool) else ssl.lower() != "false"
         self.device_type = device_type
         self.name = name
         self.uuid = str(uuid4())
