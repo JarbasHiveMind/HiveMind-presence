@@ -1,4 +1,4 @@
-from HiveMind_presence.upnp_server import UPNPAnnounce
+from hivemind_presence.upnp_server import UPNPAnnounce
 
 
 class LocalPresence:
@@ -27,7 +27,7 @@ class LocalPresence:
                        service_type="HiveMind-websocket",
                        name="HiveMind-Node"):
         try:
-            from HiveMind_presence.zero import ZeroConfAnnounce
+            from hivemind_presence.zero import ZeroConfAnnounce
             self.zero = ZeroConfAnnounce(port=port, ssl=ssl, name=name,
                                          service_type=service_type)
         except ImportError:

@@ -4,8 +4,8 @@ from uuid import uuid4
 from zeroconf import ServiceBrowser, ServiceStateChange
 from zeroconf import Zeroconf, ServiceInfo
 
-from HiveMind_presence.devices import HiveMindNode, AbstractDevice
-from HiveMind_presence.utils import get_ip
+from hivemind_presence.devices import HiveMindNode, AbstractDevice
+from hivemind_presence.utils import get_ip
 
 
 class ZeroConfAnnounce:

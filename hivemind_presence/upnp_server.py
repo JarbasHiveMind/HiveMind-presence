@@ -6,10 +6,10 @@ from uuid import uuid4
 import requests
 import upnpclient
 
-from HiveMind_presence.devices import HiveMindNode, AbstractDevice
-from HiveMind_presence.ssdp import SSDPServer
-from HiveMind_presence.utils import LOG, xml2dict
-from HiveMind_presence.utils import get_ip
+from hivemind_presence.devices import HiveMindNode, AbstractDevice
+from hivemind_presence.ssdp import SSDPServer
+from hivemind_presence.utils import LOG, xml2dict
+from hivemind_presence.utils import get_ip
 
 
 class UPNPHTTPServerHandler(BaseHTTPRequestHandler):

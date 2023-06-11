@@ -1,7 +1,7 @@
 import time
 
-from HiveMind_presence.upnp_server import UPNPScanner
-from HiveMind_presence.utils import LOG
+from hivemind_presence.upnp_server import UPNPScanner
+from hivemind_presence.utils import LOG
 
 
 class LocalDiscovery:
@@ -14,7 +14,7 @@ class LocalDiscovery:
 
     def _init_zeroconf(self):
         try:
-            from HiveMind_presence.zero import ZeroScanner
+            from hivemind_presence.zero import ZeroScanner
             self.zero = ZeroScanner()
             self.zero.on_new_node = self.on_new_zeroconf_node
         except ImportError:

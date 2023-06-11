@@ -17,7 +17,7 @@ import time
 from email.utils import formatdate
 from errno import ENOPROTOOPT
 
-from HiveMind_presence.utils import LOG
+from hivemind_presence.utils import LOG
 
 SSDP_PORT = 1900
 SSDP_ADDR = '239.255.255.250'
