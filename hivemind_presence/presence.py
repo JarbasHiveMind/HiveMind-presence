@@ -38,11 +38,13 @@ class LocalPresence:
     def start(self):
         if self.zero:
             self.zero.start()
-        self.upnp.start()
+        if self.upnp:
+            self.upnp.start()
         self.running = True
 
     def stop(self):
         if self.zero:
             self.zero.stop()
-        self.upnp.stop()
+        if self.upnp:
+            self.upnp.stop()
         self.running = False
