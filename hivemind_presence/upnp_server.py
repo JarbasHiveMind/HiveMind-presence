@@ -159,7 +159,7 @@ class UPNPHTTPServer(threading.Thread):
 class UPNPScanner(threading.Thread):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.setDaemon(True)
+        self.daemon = True
         self.nodes = {}
         self.running = False
 

@@ -7,7 +7,9 @@ class AbstractDevice:
     def __init__(self, host, port, device_type, ssl=False, name="HiveMind Node"):
         self.host = host
         self.port = port
-        self.ssl = ssl if isinstance(ssl, bool) else ssl.lower() != "false"
+        if isinstance(ssl, str):
+            ssl = ssl.lower() != "false"
+        self.ssl = ssl if isinstance(ssl, bool) else False
         self.device_type = device_type
         self.name = name
         self.uuid = str(uuid4())
@@ -54,11 +56,14 @@ class HiveMindNode:
 
     def connect(self, key, crypto_key=None, self_signed=True,
                 useragent="HiveMind-websocket-client"):
+        if self.ssl:
+            host = f"wss://{self.host}"
+        else:
+            host = f"ws://{self.host}"
         bus = HiveMessageBusClient(key=key,
                                    crypto_key=crypto_key,
-                                   host=self.host, port=self.port,
+                                   host=host, port=self.port,
                                    useragent=useragent,
-                                   ssl=self.ssl,
                                    self_signed=self_signed)
         bus.run_in_thread()
         return bus

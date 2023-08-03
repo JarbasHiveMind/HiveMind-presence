@@ -1,10 +1,9 @@
 import ipaddress
-from uuid import uuid4
+import time
 
 from zeroconf import ServiceBrowser, ServiceStateChange
 from zeroconf import Zeroconf, ServiceInfo
 
-from hivemind_presence.devices import HiveMindNode, AbstractDevice
 from hivemind_presence.utils import get_ip
 
 
@@ -49,20 +48,23 @@ class ZeroConfAnnounce:
 
 
 class ZeroScanner:
-    def __init__(self):
+    def __init__(self, identifier="HiveMind-websocket"):
         self.zero = None
         self.browser = None
         self.nodes = {}
         self.running = False
+        self.identifier = identifier.encode("utf-8")
 
     def get_nodes(self):
         return self.nodes
 
     def on_new_node(self, node):
-        self.nodes[node.address] = node
+        node["last_seen"] = time.time()
+        self.nodes[f'{node["name"]}:{node["host"]}'] = node
 
     def on_node_update(self, node):
-        self.nodes[node.address] = node
+        node["last_seen"] = time.time()
+        self.nodes[f'{node["name"]}:{node["host"]}'] = node
 
     def on_service_state_change(self, zeroconf, service_type, name,
                                 state_change):
@@ -72,17 +74,11 @@ class ZeroScanner:
             info = zeroconf.get_service_info(service_type, name)
             if info and info.properties:
                 for key, value in info.properties.items():
-                    if key == b"type" and value == b"HiveMind-websocket":
+                    if key == b"type" and value == self.identifier:
                         host = info._properties[b"host"].decode("utf-8")
                         port = info._properties[b"port"].decode("utf-8")
-                        ssl = info._properties[b"ssl"].decode("utf-8")
                         name = info._properties[b"name"].decode("utf-8")
-                        device = AbstractDevice(host=host,
-                                                port=port,
-                                                name=name,
-                                                ssl=ssl,
-                                                device_type='HiveMind-websocket')
-                        node = HiveMindNode(device)
+                        node = {"host": host, "port": port, "name": name}
                         if state_change is ServiceStateChange.Added:
                             self.on_new_node(node)
                         else:
@@ -100,3 +96,10 @@ class ZeroScanner:
         self.zero = None
         self.browser = None
         self.running = False
+
+
+if __name__ == "__main__":
+    z = ZeroScanner()
+    z.start()
+    from ovos_utils import wait_for_exit_signal
+    wait_for_exit_signal()
