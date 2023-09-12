@@ -42,7 +42,7 @@ def required(requirements_file):
 
 
 setup(
-    name='HiveMind-presence',
+    name='hivemind-presence',
     version=get_version(),
     packages=['hivemind_presence'],
     include_package_data=True,
