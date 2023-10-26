@@ -78,7 +78,8 @@ class ZeroScanner:
                         host = info._properties[b"host"].decode("utf-8")
                         port = info._properties[b"port"].decode("utf-8")
                         name = info._properties[b"name"].decode("utf-8")
-                        node = {"host": host, "port": port, "name": name}
+                        ssl = info._properties[b"ssl"].decode("utf-8")
+                        node = {"host": host, "port": port, "name": name, "ssl": ssl}
                         if state_change is ServiceStateChange.Added:
                             self.on_new_node(node)
                         else:

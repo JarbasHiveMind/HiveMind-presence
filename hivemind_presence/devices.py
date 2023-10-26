@@ -43,6 +43,10 @@ class HiveMindNode:
         return self.device.address
 
     @property
+    def device_type(self):
+        return self.device.device_type
+
+    @property
     def host(self):
         return self.device.host
 

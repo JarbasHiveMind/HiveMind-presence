@@ -157,11 +157,12 @@ class UPNPHTTPServer(threading.Thread):
 
 
 class UPNPScanner(threading.Thread):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, identifier="HiveMind-websocket", *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.daemon = True
         self.nodes = {}
         self.running = False
+        self.service_type = identifier
 
     def get_nodes(self):
         return self.nodes
@@ -172,7 +173,8 @@ class UPNPScanner(threading.Thread):
     def on_node_update(self, node):
         self.nodes[node.address] = node
 
-    def _get_node_data(self, location, service_type="HiveMind-websocket"):
+    def _get_node_data(self, location, service_type=None):
+        service_type = service_type or self.service_type
         LOG.info(f"Fetching Node data: {location}")
         xml = requests.get(location).text
         data = xml2dict(xml)

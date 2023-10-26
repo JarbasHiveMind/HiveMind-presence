@@ -24,7 +24,7 @@ def get_version():
                     '# END_VERSION_BLOCK' in line):
                 break
     version = f"{major}.{minor}.{build}"
-    if alpha:
+    if int(alpha) > 0:
         version += f"a{alpha}"
     return version
 
@@ -50,5 +50,10 @@ setup(
     url='https://github.com/JarbasHiveMind/HiveMind-presence',
     license='MIT',
     author='jarbasAI',
-    author_email='jarbasai@mailfence.com'
+    author_email='jarbasai@mailfence.com',
+    entry_points={
+        'console_scripts': [
+            'hivemind-presence=hivemind_presence.scripts:hmpresence_cmds'
+        ]
+    }
 )
