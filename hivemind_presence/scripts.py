@@ -20,9 +20,9 @@ def hmpresence_cmds():
               help="friendly device name (default: HiveMind-Node)")
 @click.option("--service-type", required=False, type=str, default="HiveMind-websocket",
               help="HiveMind service type (default: HiveMind-websocket)")
-@click.option("--zeroconf", required=False, type=bool, default=True, help="advertise via zeroconf")
-@click.option("--upnp", required=False, type=bool, default=False, help="advertise via UPNP")
-@click.option("--ssl", required=False, type=bool, default=False, help="report ssl support")
+@click.option("--zeroconf", required=False, type=bool, default=True, help="advertise via zeroconf (default: True)")
+@click.option("--upnp", required=False, type=bool, default=False, help="advertise via UPNP (default: False)")
+@click.option("--ssl", required=False, type=bool, default=False, help="report ssl support (default: False)")
 def announce(port, name, service_type, zeroconf, upnp, ssl):
     announcer = LocalPresence(port=port, ssl=ssl, service_type=service_type, name=name, zeroconf=zeroconf, upnp=upnp)
     announcer.start()
@@ -31,8 +31,8 @@ def announce(port, name, service_type, zeroconf, upnp, ssl):
 
 
 @hmpresence_cmds.command(help="scan for hivemind nodes in the local network", name="scan")
-@click.option("--zeroconf", required=False, type=bool, default=True, help="scan via zeroconf")
-@click.option("--upnp", required=False, type=bool, default=False, help="scan via UPNP")
+@click.option("--zeroconf", required=False, type=bool, default=True, help="scan via zeroconf (default: True)")
+@click.option("--upnp", required=False, type=bool, default=False, help="scan via UPNP (default: False)")
 @click.option("--service-type", required=False, type=str, default="HiveMind-websocket",
               help="HiveMind service type (default: HiveMind-websocket)")
 def scan(zeroconf, upnp, service_type):
