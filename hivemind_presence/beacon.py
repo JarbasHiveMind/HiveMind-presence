@@ -49,14 +49,30 @@ class BeaconServer(Thread):
     def __init__(self, device_name: str = "HiveMind-Node",
                  site_id: str = "default",
                  config: str = None):
-        super().__init__(daemon=True)
+        """
+                 Initialize the BeaconServer thread with the device identity and configuration path.
+                 
+                 Parameters:
+                     device_name (str): Human-readable name advertised by the beacon (default "HiveMind-Node").
+                     site_id (str): Site identifier included in broadcasts (default "default").
+                     config (str | None): Path to the server JSON config file; if None, uses the module default CONFIG_PATH.
+                 
+                 Notes:
+                     The instance is created as a daemon thread and an internal stop event is initialized for controlling the broadcast loop.
+                 """
+                 super().__init__(daemon=True)
         self.device_name = device_name
         self.site_id = site_id
         self._config_path = config or CONFIG_PATH
         self._stop_event = threading.Event()
 
     def _load_config(self) -> dict:
-        """Load server.json; return empty dict on any error."""
+        """
+        Load the server configuration from the configured JSON file.
+        
+        Returns:
+            config (dict): Parsed JSON configuration; returns an empty dict if the file is missing or any error occurs while reading or parsing.
+        """
         if os.path.isfile(self._config_path):
             try:
                 with open(self._config_path) as f:
@@ -66,7 +82,19 @@ class BeaconServer(Thread):
         return {}
 
     def _build_payload(self) -> dict:
-        """Build the JSON payload broadcast to the network."""
+        """
+        Constructs the hub payload describing this device for UDP broadcast.
+        
+        Returns:
+            payload (dict): Dictionary with keys:
+                - "device_name": configured device name.
+                - "site_id": configured site identifier.
+                - "host": primary local IPv4 address.
+                - "capabilities": dict containing "binarize", "encodings" (list), and "ciphers" (list).
+                - "agent": agent protocol module name or None.
+                - "binary_handler": binary protocol module name or None.
+                - "protocols": mapping of protocol name to {"port": int|None, "ssl": bool|None}.
+        """
         cfg = self._load_config()
 
         return {
@@ -91,7 +119,11 @@ class BeaconServer(Thread):
         self._stop_event.set()
 
     def run(self) -> None:
-        """Broadcast loop — runs until ``stop()`` is called."""
+        """
+        Periodically broadcasts the server payload over UDP to the local network until a stop signal is set.
+        
+        Builds the payload, encodes it as UTF-8 JSON, and sends it to 255.255.255.255 on BROADCAST_PORT at BROADCAST_INTERVAL intervals. Ensures the UDP socket is closed when the loop exits.
+        """
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         try:
@@ -112,6 +144,15 @@ class BeaconListener:
     """
 
     def __init__(self, port: int = BROADCAST_PORT):
+        """
+        Initialize the BeaconListener.
+        
+        Parameters:
+            port (int): UDP port to bind for receiving beacon broadcasts (defaults to BROADCAST_PORT).
+        
+        Description:
+            Stores the listening port and creates an internal event used to signal stopping the listener loop.
+        """
         self.port = port
         self._stop_event = threading.Event()
 
@@ -173,6 +214,13 @@ class BeaconAnnounce:
     """
 
     def __init__(self, name: str = "HiveMind-Node", site_id: str = "default"):
+        """
+        Create a BeaconAnnounce that wraps an internal BeaconServer for broadcasting.
+        
+        Parameters:
+        	name (str): Human-readable device name to advertise.
+        	site_id (str): Identifier for the site/group the device belongs to.
+        """
         self._server = BeaconServer(device_name=name, site_id=site_id)
 
     def start(self) -> None:
@@ -197,7 +245,18 @@ class BeaconScanner(Thread):
 
     def __init__(self, service_type: str = "HiveMind-websocket",
                  timeout: float = None):
-        super().__init__(daemon=True)
+        """
+                 Initialize the BeaconScanner.
+                 
+                 Parameters:
+                     service_type (str): Service type tag to attach to discovered nodes; defaults to "HiveMind-websocket".
+                     timeout (float): Optional per-listen timeout in seconds for discovery operations; if None, listening may block indefinitely.
+                 
+                 Description:
+                     Creates an internal BeaconListener, stores scanning configuration, initializes the running flag, and sets
+                     `on_new_node` to a no-op callback that will be invoked with each discovered node.
+                 """
+                 super().__init__(daemon=True)
         self._listener = BeaconListener()
         self._service_type = service_type
         self._timeout = timeout
@@ -210,7 +269,11 @@ class BeaconScanner(Thread):
         self._listener.stop()
 
     def run(self) -> None:
-        """Scan loop — runs until ``stop()`` is called or timeout elapses."""
+        """
+        Continuously discovers HiveMind hubs via the listener and notifies about each unique node.
+        
+        Runs until stop() is called or the scanner's timeout elapses. For each received hub payload, constructs a HiveMindNode (using the first listed protocol's port and ssl when present, defaulting to port 5678 and ssl False) and invokes the scanner's on_new_node callback with that node. Duplicate discoveries for the same host:port are suppressed.
+        """
         self.running = True
         seen: set = set()
         for hub in self._listener.listen(timeout=self._timeout):

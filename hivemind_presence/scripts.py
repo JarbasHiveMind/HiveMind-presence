@@ -23,6 +23,17 @@ def hmpresence_cmds():
 @click.option("--ssl", required=False, type=bool, default=False,
               help="report ssl support (default: False)")
 def announce(port, name, service_type, ssl):
+    """
+    Announce a local HiveMind service on the network.
+    
+    Starts a LocalPresence instance that advertises the given service parameters and runs until a termination signal is received.
+    
+    Parameters:
+        port (int): TCP port the service listens on.
+        name (str): Friendly name to advertise for the node.
+        service_type (str): Service type identifier used for discovery (e.g., "HiveMind-websocket").
+        ssl (bool): Whether the advertised service uses SSL; advertised as the node's SSL state.
+    """
     announcer = LocalPresence(
         port=port, ssl=ssl,
         service_type=service_type,
@@ -39,6 +50,13 @@ def announce(port, name, service_type, ssl):
 @click.option("--timeout", required=False, type=float, default=25.0,
               help="scan duration in seconds (default: 25)")
 def scan(service_type, timeout):
+    """
+    Start local discovery for HiveMind nodes and display discovered nodes in a Rich table until an exit signal is received.
+    
+    Parameters:
+        service_type (str): Service type to discover (e.g., "HiveMind-websocket").
+        timeout (float): Desired scan duration in seconds. Note: this parameter is accepted but is not currently applied by the discovery loop.
+    """
     console = Console()
 
     discovery = LocalDiscovery(service_type=service_type)
@@ -50,6 +68,14 @@ def scan(service_type, timeout):
     table.add_column("SSL")
 
     def print_node(node: HiveMindNode):
+        """
+        Update the console table to show a discovered HiveMind node.
+        
+        Adds the node's friendly name, host, port, and SSL state as a new row and reprints the table to the console.
+        
+        Parameters:
+            node (HiveMindNode): Discovered node whose details will be added to the display table.
+        """
         console.clear()
         table.add_row(
             node.friendly_name,
