@@ -13,7 +13,7 @@ class LocalDiscovery:
     Backends:
         upnp     – UPnP/SSDP (requires ``upnpclient``; installed with package)
         zeroconf – mDNS/Zeroconf (requires optional ``zeroconf`` package)
-        beacon   – HiveBeacon UDP broadcast (requires optional ``hivebeacon``)
+        beacon   – HiveBeacon UDP broadcast (built-in; no extra packages needed)
         ggwave   – Audio credential pairing (requires optional
                    ``hivemind-ggwave`` + ggwave binaries)
 
@@ -68,13 +68,9 @@ class LocalDiscovery:
             self.zero = None
 
     def _init_beacon(self):
-        try:
-            from hivemind_presence.beacon import BeaconScanner
-            self.beacon = BeaconScanner(service_type=self.service_type)
-            self.beacon.on_new_node = self.on_new_beacon_node
-        except ImportError:
-            LOG.debug("hivebeacon not installed; HiveBeacon UDP scan disabled")
-            self.beacon = None
+        from hivemind_presence.beacon import BeaconScanner
+        self.beacon = BeaconScanner(service_type=self.service_type)
+        self.beacon.on_new_node = self.on_new_beacon_node
 
     def _init_ggwave(self):
         try:

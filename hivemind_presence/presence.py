@@ -10,7 +10,7 @@ class LocalPresence:
     Backends:
         upnp     – UPnP/SSDP (requires ``upnpclient``; installed with package)
         zeroconf – mDNS/Zeroconf (requires optional ``zeroconf`` package)
-        beacon   – HiveBeacon UDP broadcast (requires optional ``hivebeacon``)
+        beacon   – HiveBeacon UDP broadcast (built-in; no extra packages needed)
         ggwave   – Audio pairing / GGWaveMaster (requires optional
                    ``hivemind-ggwave`` + ggwave binaries)
 
@@ -70,13 +70,9 @@ class LocalPresence:
             # needs to be installed by user explicitly
             self.zero = None
 
-    def _init_beacon(self, name="HiveMind-Node", site_id="default"):
-        try:
-            from hivemind_presence.beacon import BeaconAnnounce
-            self.beacon = BeaconAnnounce(name=name, site_id=site_id)
-        except ImportError:
-            LOG.debug("hivebeacon not installed; HiveBeacon UDP announce disabled")
-            self.beacon = None
+    def _init_beacon(self, name: str = "HiveMind-Node", site_id: str = "default"):
+        from hivemind_presence.beacon import BeaconAnnounce
+        self.beacon = BeaconAnnounce(name=name, site_id=site_id)
 
     def _init_ggwave(self, pswd=None, host=None, silent_mode=False,
                      add_client_callback=None):
