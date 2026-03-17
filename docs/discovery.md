@@ -1,17 +1,18 @@
 # Local Discovery Implementation
 
-The `LocalDiscovery` class is used by HiveMind satellites to scan the local network for available HiveMind hubs.
+The `LocalDiscovery` class is used by HiveMind satellites to scan the local network for available HiveMind hubs via HiveBeacon UDP broadcast.
 
 - **Source File**: `HiveMind-presence/hivemind_presence/discovery.py`
 - **Primary Class**: `LocalDiscovery`
 
-## Backend Initialization
+## HiveBeacon Scanner
 
-Similar to `LocalPresence`, the `LocalDiscovery` class initializes its scanners only if the dependencies are present.
+The `LocalDiscovery` class uses a single HiveBeacon scanner with no external dependencies:
 
-- **UPnP**: `_init_upnp()` (uses `hivemind_presence.upnp_server.UPNPScanner`)
-- **Zeroconf**: `_init_zeroconf()` (uses `hivemind_presence.zero.ZeroScanner`)
-- **Beacon**: `_init_beacon()` (uses `hivemind_presence.beacon.BeaconScanner`)
+- **BeaconScanner**: `_init_beacon()` (uses `hivemind_presence.beacon.BeaconScanner`)
+  - Listens on UDP port 56789 for hub broadcasts
+  - Deduplicates by host + device name
+  - Converts raw beacon payloads to `HiveMindNode` objects
 
 ## Core Methods
 

@@ -1,23 +1,18 @@
 # HiveMind Presence
 
-HiveMind Presence is a unified discovery and announcement framework for the HiveMind ecosystem. It supports multiple backends (Zeroconf, UPnP, and HiveBeacon) to allow Minds to announce themselves and satellites to find them.
+HiveMind Presence is a lightweight discovery and announcement framework for the HiveMind ecosystem. It uses **HiveBeacon** — a simple UDP broadcast protocol — to allow Minds to announce themselves and satellites to discover them on the local network.
 
 ## Documentation Guides
 
 - [Local Presence](presence.md) - How a Mind announces itself.
 - [Local Discovery](discovery.md) - How a Satellite finds a Mind.
 
-## Overview
+## HiveBeacon Protocol
 
-The library provides a high-level API that abstracts away the complexity of various network discovery protocols. It is modular, meaning backends are only activated if their required dependencies are installed.
-
-## Backends
-
-| Backend | Protocol | Package Dependency |
-|---|---|---|
-| **Zeroconf** | mDNS/DNS-SD | `zeroconf` |
-| **UPnP** | SSDP | `upnpclient` |
-| **Beacon** | UDP Broadcast | `hivebeacon` |
+- **Zero dependencies** — no external packages required
+- **Simple UDP broadcast** — sends hub information every 2 seconds on the local subnet
+- **Purpose-built for HiveMind** — includes hub config, capabilities, and network metadata
+- **Designed for mesh networks** — lightweight and efficient for decentralized deployments
 
 ## Installation
 

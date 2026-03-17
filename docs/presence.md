@@ -1,17 +1,18 @@
 # Local Presence Implementation
 
-The `LocalPresence` class is used by a HiveMind Mind to announce its services on the local network using all available backends.
+The `LocalPresence` class is used by a HiveMind Mind to announce its services on the local network via HiveBeacon UDP broadcast.
 
 - **Source File**: `HiveMind-presence/hivemind_presence/presence.py`
 - **Primary Class**: `LocalPresence`
 
-## Backend Initialization
+## HiveBeacon Announcer
 
-The constructor (`__init__`) checks the provided boolean flags and attempts to initialize each requested backend. If a required dependency is missing, it logs a debug message and disables that backend.
+The `LocalPresence` class uses a single HiveBeacon announcer with no external dependencies:
 
-- **UPnP**: `_init_upnp()` (uses `hivemind_presence.upnp_server.UPNPAnnounce`)
-- **Zeroconf**: `_init_zeroconf()` (uses `hivemind_presence.zero.ZeroConfAnnounce`)
-- **Beacon**: `_init_beacon()` (uses `hivemind_presence.beacon.BeaconAnnounce`)
+- **BeaconAnnounce**: `_init_beacon()` (uses `hivemind_presence.beacon.BeaconAnnounce`)
+  - Broadcasts on UDP port 56789 every 2 seconds
+  - Re-reads `server.json` on each cycle (changes take effect without restart)
+  - Includes hub capabilities, network protocols, and configuration metadata
 
 ## Core Methods
 
