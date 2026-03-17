@@ -68,11 +68,6 @@ class BeaconServer(Thread):
     def _build_payload(self) -> dict:
         """Build the JSON payload broadcast to the network."""
         cfg = self._load_config()
-        try:
-            from hivemind_ggwave import GGWaveMaster  # noqa: F401
-            has_ggwave = True
-        except ImportError:
-            has_ggwave = False
 
         return {
             "device_name": self.device_name,
@@ -82,7 +77,6 @@ class BeaconServer(Thread):
                 "binarize": cfg.get("binarize"),
                 "encodings": cfg.get("allowed_encodings", []),
                 "ciphers": cfg.get("allowed_ciphers", []),
-                "ggwave": has_ggwave,
             },
             "agent": cfg.get("agent_protocol", {}).get("module"),
             "binary_handler": cfg.get("binary_protocol", {}).get("module"),

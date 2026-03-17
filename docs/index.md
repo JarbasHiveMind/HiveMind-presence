@@ -1,6 +1,6 @@
 # HiveMind Presence
 
-HiveMind Presence is a unified discovery and announcement framework for the HiveMind ecosystem. It supports multiple backends (Zeroconf, UPnP, HiveBeacon, and GGWave) to allow Minds to announce themselves and satellites to find them.
+HiveMind Presence is a unified discovery and announcement framework for the HiveMind ecosystem. It supports multiple backends (Zeroconf, UPnP, and HiveBeacon) to allow Minds to announce themselves and satellites to find them.
 
 ## Documentation Guides
 
@@ -18,7 +18,6 @@ The library provides a high-level API that abstracts away the complexity of vari
 | **Zeroconf** | mDNS/DNS-SD | `zeroconf` |
 | **UPnP** | SSDP | `upnpclient` |
 | **Beacon** | UDP Broadcast | `hivebeacon` |
-| **GGWave** | Audio Pairing | `hivemind-ggwave` |
 
 ## Installation
 

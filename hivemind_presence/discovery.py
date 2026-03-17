@@ -14,20 +14,17 @@ class LocalDiscovery:
         upnp     – UPnP/SSDP (requires ``upnpclient``; installed with package)
         zeroconf – mDNS/Zeroconf (requires optional ``zeroconf`` package)
         beacon   – HiveBeacon UDP broadcast (built-in; no extra packages needed)
-        ggwave   – Audio credential pairing (requires optional
-                   ``hivemind-ggwave`` + ggwave binaries)
 
     Raises:
         ValueError: If all backends are disabled.
     """
 
-    def __init__(self, zeroconf=True, upnp=True, beacon=True, ggwave=False,
+    def __init__(self, zeroconf=True, upnp=True, beacon=True,
                  service_type="HiveMind-websocket"):
         self._nodes = {}
         self.zero = None
         self.upnp = None
         self.beacon = None
-        self.ggwave_scanner = None
         self.service_type = service_type
 
         if upnp:
@@ -36,15 +33,13 @@ class LocalDiscovery:
             self._init_zeroconf()
         if beacon:
             self._init_beacon()
-        if ggwave:
-            self._init_ggwave()
 
         self.running = False
 
-        if not any([self.zero, self.upnp, self.beacon, self.ggwave_scanner]):
+        if not any([self.zero, self.upnp, self.beacon]):
             raise ValueError(
                 "No discovery backends available. Enable at least one of: "
-                "upnp, zeroconf, beacon, ggwave — and ensure the required "
+                "upnp, zeroconf, beacon — and ensure the required "
                 "packages are installed."
             )
 
@@ -72,15 +67,6 @@ class LocalDiscovery:
         self.beacon = BeaconScanner(service_type=self.service_type)
         self.beacon.on_new_node = self.on_new_beacon_node
 
-    def _init_ggwave(self):
-        try:
-            from hivemind_presence.ggwave import GGWaveScanner
-            self.ggwave_scanner = GGWaveScanner()
-            self.ggwave_scanner.on_new_node = self.on_new_ggwave_node
-        except (ImportError, ValueError) as e:
-            LOG.debug(f"GGWave scanner unavailable: {e}")
-            self.ggwave_scanner = None
-
     # ---------- per-backend callbacks ----------
 
     def on_new_zeroconf_node(self, node):
@@ -102,11 +88,6 @@ class LocalDiscovery:
         self._nodes[node.address] = node
         self.on_new_node(node)
 
-    def on_new_ggwave_node(self, node):
-        LOG.info("GGWave Node Found: " + node.address)
-        self._nodes[node.address] = node
-        self.on_new_node(node)
-
     # ---------- public API ----------
 
     def on_new_node(self, node):
@@ -123,8 +104,6 @@ class LocalDiscovery:
             self.upnp.start()
         if self.beacon:
             self.beacon.start()
-        if self.ggwave_scanner:
-            self.ggwave_scanner.start()
         self.running = True
 
     def scan(self, timeout=25):
@@ -146,6 +125,4 @@ class LocalDiscovery:
             self.upnp.stop()
         if self.beacon:
             self.beacon.stop()
-        if self.ggwave_scanner:
-            self.ggwave_scanner.stop()
         self.running = False

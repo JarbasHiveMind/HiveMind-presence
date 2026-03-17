@@ -11,26 +11,16 @@ class LocalPresence:
         upnp     – UPnP/SSDP (requires ``upnpclient``; installed with package)
         zeroconf – mDNS/Zeroconf (requires optional ``zeroconf`` package)
         beacon   – HiveBeacon UDP broadcast (built-in; no extra packages needed)
-        ggwave   – Audio pairing / GGWaveMaster (requires optional
-                   ``hivemind-ggwave`` + ggwave binaries)
-
-    Args:
-        ggwave_add_client_callback: Required when ``ggwave=True``; called with
-            ``(access_key: str, pswd: str)`` to register a pairing request
-            without importing hivemind-core directly.
     """
 
     def __init__(self, port=5678, ssl=False,
                  service_type="HiveMind-websocket",
                  name="HiveMind-Node",
-                 upnp=True, zeroconf=True, beacon=True, ggwave=False,
-                 ggwave_pswd=None, ggwave_host=None, ggwave_silent=False,
-                 ggwave_add_client_callback=None):
+                 upnp=True, zeroconf=True, beacon=True):
         self._nodes = {}
         self.upnp = None
         self.zero = None
         self.beacon = None
-        self.ggwave_announce = None
 
         if upnp:
             self._init_upnp(port=port, ssl=ssl, name=name,
@@ -40,10 +30,6 @@ class LocalPresence:
                                 service_type=service_type)
         if beacon:
             self._init_beacon(name=name)
-        if ggwave:
-            self._init_ggwave(pswd=ggwave_pswd, host=ggwave_host,
-                              silent_mode=ggwave_silent,
-                              add_client_callback=ggwave_add_client_callback)
 
         self.running = False
 
@@ -74,20 +60,6 @@ class LocalPresence:
         from hivemind_presence.beacon import BeaconAnnounce
         self.beacon = BeaconAnnounce(name=name, site_id=site_id)
 
-    def _init_ggwave(self, pswd=None, host=None, silent_mode=False,
-                     add_client_callback=None):
-        try:
-            from hivemind_presence.ggwave import GGWaveAnnounce
-            self.ggwave_announce = GGWaveAnnounce(
-                pswd=pswd,
-                host=host,
-                silent_mode=silent_mode,
-                add_client_callback=add_client_callback,
-            )
-        except (ImportError, ValueError) as e:
-            LOG.debug(f"GGWave announce unavailable: {e}")
-            self.ggwave_announce = None
-
     def start(self):
         if self.zero:
             self.zero.start()
@@ -95,8 +67,6 @@ class LocalPresence:
             self.upnp.start()
         if self.beacon:
             self.beacon.start()
-        if self.ggwave_announce:
-            self.ggwave_announce.start()
         self.running = True
 
     def stop(self):
@@ -106,6 +76,4 @@ class LocalPresence:
             self.upnp.stop()
         if self.beacon:
             self.beacon.stop()
-        if self.ggwave_announce:
-            self.ggwave_announce.stop()
         self.running = False

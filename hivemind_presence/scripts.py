@@ -26,11 +26,9 @@ def hmpresence_cmds():
               help="advertise via UPnP/SSDP (default: False)")
 @click.option("--beacon", required=False, type=bool, default=True,
               help="advertise via HiveBeacon UDP broadcast (default: True)")
-@click.option("--ggwave", required=False, type=bool, default=False,
-              help="enable GGWave audio pairing on hub side (default: False)")
 @click.option("--ssl", required=False, type=bool, default=False,
               help="report ssl support (default: False)")
-def announce(port, name, service_type, zeroconf, upnp, beacon, ggwave, ssl):
+def announce(port, name, service_type, zeroconf, upnp, beacon, ssl):
     announcer = LocalPresence(
         port=port, ssl=ssl,
         service_type=service_type,
@@ -38,7 +36,6 @@ def announce(port, name, service_type, zeroconf, upnp, beacon, ggwave, ssl):
         zeroconf=zeroconf,
         upnp=upnp,
         beacon=beacon,
-        ggwave=ggwave,
     )
     announcer.start()
     wait_for_exit_signal()
@@ -52,20 +49,17 @@ def announce(port, name, service_type, zeroconf, upnp, beacon, ggwave, ssl):
               help="scan via UPnP/SSDP (default: False)")
 @click.option("--beacon", required=False, type=bool, default=True,
               help="scan via HiveBeacon UDP broadcast (default: True)")
-@click.option("--ggwave", required=False, type=bool, default=False,
-              help="discover via GGWave audio pairing (default: False)")
 @click.option("--service-type", required=False, type=str, default="HiveMind-websocket",
               help="HiveMind service type (default: HiveMind-websocket)")
 @click.option("--timeout", required=False, type=float, default=25.0,
               help="scan duration in seconds (default: 25)")
-def scan(zeroconf, upnp, beacon, ggwave, service_type, timeout):
+def scan(zeroconf, upnp, beacon, service_type, timeout):
     console = Console()
 
     discovery = LocalDiscovery(
         zeroconf=zeroconf,
         upnp=upnp,
         beacon=beacon,
-        ggwave=ggwave,
         service_type=service_type,
     )
 

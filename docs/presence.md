@@ -12,7 +12,6 @@ The constructor (`__init__`) checks the provided boolean flags and attempts to i
 - **UPnP**: `_init_upnp()` (uses `hivemind_presence.upnp_server.UPNPAnnounce`)
 - **Zeroconf**: `_init_zeroconf()` (uses `hivemind_presence.zero.ZeroConfAnnounce`)
 - **Beacon**: `_init_beacon()` (uses `hivemind_presence.beacon.BeaconAnnounce`)
-- **GGWave**: `_init_ggwave()` (uses `hivemind_presence.ggwave.GGWaveAnnounce`)
 
 ## Core Methods
 

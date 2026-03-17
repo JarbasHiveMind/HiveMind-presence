@@ -12,7 +12,6 @@ Similar to `LocalPresence`, the `LocalDiscovery` class initializes its scanners 
 - **UPnP**: `_init_upnp()` (uses `hivemind_presence.upnp_server.UPNPScanner`)
 - **Zeroconf**: `_init_zeroconf()` (uses `hivemind_presence.zero.ZeroScanner`)
 - **Beacon**: `_init_beacon()` (uses `hivemind_presence.beacon.BeaconScanner`)
-- **GGWave**: `_init_ggwave()` (uses `hivemind_presence.ggwave.GGWaveScanner`)
 
 ## Core Methods
 
