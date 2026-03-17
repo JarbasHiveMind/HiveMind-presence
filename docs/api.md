@@ -10,35 +10,30 @@ Source: `hivemind_presence/`
 from hivemind_presence import LocalPresence
 ```
 
-Announces a HiveMind hub on the local network using UPnP/SSDP and/or
-Zeroconf/mDNS.
+Announces a HiveMind hub on the local network via HiveBeacon UDP broadcast.
 
 ### Constructor
 
 ```python
-LocalPresence(port=5678, name=None, service_type="HiveMind-websocket",
-              zeroconf=True, upnp=True, ssl=False)
+LocalPresence(port=5678, name="HiveMind-Node", service_type="HiveMind-websocket", ssl=False)
 ```
 
 | Parameter | Type | Description |
 |---|---|---|
-| `port` | `int` | HiveMind server port to advertise |
-| `name` | `str` | Device name (defaults to hostname) |
-| `service_type` | `str` | Service identifier used in UPnP model name and Zeroconf service properties |
-| `zeroconf` | `bool` | Enable Zeroconf/mDNS announcement (requires `zeroconf` package) |
-| `upnp` | `bool` | Enable UPnP/SSDP announcement |
-| `ssl` | `bool` | Advertise the port as SSL-enabled |
+| `port` | `int` | HiveMind server port to advertise (default: 5678) |
+| `name` | `str` | Device friendly name (default: `HiveMind-Node`) |
+| `service_type` | `str` | Service identifier tag (default: `HiveMind-websocket`) |
+| `ssl` | `bool` | Advertise the port as SSL-enabled (default: `False`) |
 
 ### Methods
 
 #### `start()`
 
-Starts UPnP HTTP server (port 8088 by default) and SSDP multicast announcements,
-and/or registers with Zeroconf. Runs until `stop()` is called.
+Starts HiveBeacon broadcasts. Sends hub information every 2 seconds on UDP port 56789 (multicast address 255.255.255.255).
 
 #### `stop()`
 
-Unregisters all announcements and shuts down background threads cleanly.
+Stops HiveBeacon broadcasts and shuts down background threads cleanly.
 
 ---
 
@@ -48,25 +43,17 @@ Unregisters all announcements and shuts down background threads cleanly.
 from hivemind_presence import LocalDiscovery
 ```
 
-Scans the local network for HiveMind hubs announced via UPnP/SSDP and/or
-Zeroconf/mDNS.
+Scans the local network for HiveMind hubs announced via HiveBeacon UDP broadcast.
 
 ### Constructor
 
 ```python
-LocalDiscovery(zeroconf=True, upnp=True, service_type="HiveMind-websocket")
+LocalDiscovery(service_type="HiveMind-websocket")
 ```
 
 | Parameter | Type | Description |
 |---|---|---|
-| `zeroconf` | `bool` | Enable Zeroconf/mDNS scanning (requires optional `zeroconf` package) |
-| `upnp` | `bool` | Enable UPnP scanning |
-| `service_type` | `str` | Filter — only nodes matching this type are reported |
-
-Raises `ValueError` if both `zeroconf` and `upnp` are `False`.
-
-Zeroconf is a soft dependency (LGPL). If the `zeroconf` package is not installed,
-the Zeroconf scanner is silently disabled and discovery continues with UPnP only.
+| `service_type` | `str` | Service type filter — only nodes matching this type are reported (default: `HiveMind-websocket`) |
 
 ### Attributes
 
@@ -79,12 +66,12 @@ the Zeroconf scanner is silently disabled and discovery continues with UPnP only
 
 #### `start()`
 
-Starts background scanning threads.
+Starts the HiveBeacon listener on UDP port 56789 in a background thread.
 
 #### `scan(timeout=25) -> Generator[HiveMindNode, None, None]`
 
 Starts discovery (if not already running) and yields `HiveMindNode` objects as
-they are discovered, for up to `timeout` seconds. Yields each node only once per
+they are discovered, for up to `timeout` seconds. Yields each node once per
 scan call. Polls every 100 ms.
 
 ```python
@@ -164,18 +151,29 @@ AbstractDevice(host, port, device_type, ssl=False, name="HiveMind Node")
 
 ---
 
-## Discovery protocols
+## HiveBeacon Protocol
 
-### UPnP/SSDP
+**HiveBeacon** is a lightweight UDP broadcast protocol designed specifically for HiveMind mesh discovery.
 
-- SSDP multicast on `239.255.255.250:1900`
-- UPnP device XML served on HTTP port `8088` (configurable)
-- Scanner searches for UPnP devices with `"HiveMind"` in `model_name`
-- Works across some routers that forward UPnP multicast between VLANs
+### Announcement
 
-### Zeroconf/mDNS
+- **Broadcast address**: `255.255.255.255` (UDP)
+- **Port**: `56789`
+- **Interval**: Every 2 seconds
+- **Payload**: JSON with hub capabilities, network protocols, and configuration metadata
+- **Re-read on every cycle**: Changes to `server.json` take effect without restarting
 
-- Service type: `_http._tcp.local.`
-- Service properties include: `name`, `host`, `port`, `ssl`, `service_type`
-- Requires the `zeroconf` Python package (LGPL licensed — must be installed explicitly)
-- Works on the local link only (does not cross routers unless mDNS repeater is configured)
+### Discovery
+
+- **Listener port**: `56789` (UDP)
+- **Scope**: Local subnet only (broadcast)
+- **Deduplication**: Automatic (by host + device name)
+- **Conversion**: Raw beacon payloads are converted to `HiveMindNode` objects
+
+### Advantages
+
+- **Zero dependencies** — no external packages
+- **Zero configuration** — works out of the box
+- **Lightweight** — ~2KB payload every 2 seconds
+- **Decentralized** — no central registry or service discovery daemon
+- **Mesh-friendly** — designed for distributed HiveMind networks
