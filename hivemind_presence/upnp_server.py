@@ -4,7 +4,6 @@ from time import sleep
 from uuid import uuid4
 
 import requests
-import upnpclient
 
 from hivemind_presence.devices import HiveMindNode, AbstractDevice
 from hivemind_presence.ssdp import SSDPServer
@@ -192,6 +191,7 @@ class UPNPScanner(threading.Thread):
     def run(self) -> None:
         self.running = True
         seen = []
+        import upnpclient  # optional dep; deferred so module loads without it
         while self.running:
             devices = upnpclient.discover()
             for d in devices:

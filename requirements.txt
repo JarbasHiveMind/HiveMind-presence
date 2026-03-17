@@ -1,3 +1,7 @@
-upnpclient>=0.0.8
 hivemind_bus_client>=0.0.4a3
 rich
+# Optional protocol backends (install separately to enable):
+# upnpclient>=0.0.8   — UPnP/SSDP announce + scan
+# zeroconf            — mDNS/Zeroconf announce + scan (LGPL)
+# hivebeacon          — HiveBeacon UDP broadcast
+# hivemind-ggwave     — audio pairing (also requires ggwave binaries)
