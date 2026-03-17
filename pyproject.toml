@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "HiveMind-presence"
+description = "HiveMind local network discovery and announcement via HiveBeacon UDP broadcast"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "jarbasAI", email = "jarbasai@mailfence.com"}
+]
+keywords = ["hivemind", "discovery", "broadcast", "mesh", "networking"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "hivemind_bus_client>=0.0.4a3",
+    "rich",
+]
+
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/JarbasHiveMind/HiveMind-presence"
+Repository = "https://github.com/JarbasHiveMind/HiveMind-presence"
+Issues = "https://github.com/JarbasHiveMind/HiveMind-presence/issues"
+
+[project.scripts]
+hivemind-presence = "hivemind_presence.scripts:hmpresence_cmds"
+
+[tool.setuptools.dynamic]
+version = {attr = "hivemind_presence.version.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["hivemind_presence*"]
+
+[tool.setuptools.package-data]
+hivemind_presence = ["py.typed"]
