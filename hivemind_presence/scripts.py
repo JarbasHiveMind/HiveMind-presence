@@ -20,7 +20,7 @@ def hmpresence_cmds():
               help="friendly device name (default: HiveMind-Node)")
 @click.option("--service-type", required=False, type=str, default="HiveMind-websocket",
               help="HiveMind service type (default: HiveMind-websocket)")
-@click.option("--ssl", required=False, type=bool, default=False,
+`@click.option`("--ssl", is_flag=True, default=False,
               help="report ssl support (default: False)")
 def announce(port, name, service_type, ssl):
     """
@@ -47,9 +47,10 @@ def announce(port, name, service_type, ssl):
 @hmpresence_cmds.command(help="scan for hivemind nodes in the local network", name="scan")
 @click.option("--service-type", required=False, type=str, default="HiveMind-websocket",
               help="HiveMind service type (default: HiveMind-websocket)")
-@click.option("--timeout", required=False, type=float, default=25.0,
-              help="scan duration in seconds (default: 25)")
-def scan(service_type, timeout):
+`@hmpresence_cmds.command`(help="scan for hivemind nodes in the local network", name="scan")
+`@click.option`("--service-type", required=False, type=str, default="HiveMind-websocket",
+              help="HiveMind service type (default: HiveMind-websocket)")
+def scan(service_type):
     """
     Start local discovery for HiveMind nodes and display discovered nodes in a Rich table until an exit signal is received.
     

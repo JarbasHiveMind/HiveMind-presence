@@ -50,17 +50,17 @@ class BeaconServer(Thread):
                  site_id: str = "default",
                  config: str = None):
         """
-                 Initialize the BeaconServer thread with the device identity and configuration path.
-                 
-                 Parameters:
-                     device_name (str): Human-readable name advertised by the beacon (default "HiveMind-Node").
-                     site_id (str): Site identifier included in broadcasts (default "default").
-                     config (str | None): Path to the server JSON config file; if None, uses the module default CONFIG_PATH.
-                 
-                 Notes:
-                     The instance is created as a daemon thread and an internal stop event is initialized for controlling the broadcast loop.
-                 """
-                 super().__init__(daemon=True)
+        Initialize the BeaconServer thread with the device identity and configuration path.
+        
+        Parameters:
+            device_name (str): Human-readable name advertised by the beacon (default "HiveMind-Node").
+            site_id (str): Site identifier included in broadcasts (default "default").
+            config (str | None): Path to the server JSON config file; if None, uses the module default CONFIG_PATH.
+        
+        Notes:
+            The instance is created as a daemon thread and an internal stop event is initialized for controlling the broadcast loop.
+        """
+        super().__init__(daemon=True)
         self.device_name = device_name
         self.site_id = site_id
         self._config_path = config or CONFIG_PATH
@@ -170,10 +170,21 @@ class BeaconListener:
         Yields:
             dict: Raw hub-info payload as broadcast by ``BeaconServer``.
         """
+    def listen(self, timeout: float = None, deduplicate: bool = True):
+        ...
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        sock.settimeout(1.0)
-        sock.bind(("", self.port))
+        try:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            sock.settimeout(1.0)
+            sock.bind(("", self.port))
+
+            seen: set = set()
+            deadline = time.monotonic() + timeout if timeout is not None else None
+
+            while not self._stop_event.is_set():
+                ...
+        finally:
+            sock.close()
 
         seen: set = set()
         deadline = time.monotonic() + timeout if timeout is not None else None

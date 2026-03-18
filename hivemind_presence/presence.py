@@ -18,19 +18,22 @@ class LocalPresence:
     def __init__(self, port=5678, ssl=False,
                  service_type="HiveMind-websocket",
                  name="HiveMind-Node"):
+    def __init__(self, port=5678, ssl=False,
+                 service_type="HiveMind-websocket",
+                 name="HiveMind-Node"):
         """
-                 Initialize the LocalPresence instance and prepare a HiveBeacon-based beacon for local network announcements.
-                 
-                 Parameters:
-                     port (int): TCP port number of the advertised service (default 5678).
-                     ssl (bool): Whether the advertised service uses TLS; influences advertised scheme (default False).
-                     service_type (str): Service type identifier used for discovery (default "HiveMind-websocket").
-                     name (str): Human-readable node name published by the beacon (default "HiveMind-Node").
-                 
-                 Notes:
-                     Initializes internal node registry, creates and assigns the BeaconAnnounce instance, and sets the running flag to False.
-                 """
-                 self._nodes = {}
+        Initialize the LocalPresence instance and prepare a HiveBeacon-based beacon for local network announcements.
+        
+        Parameters:
+            port (int): TCP port number of the advertised service (default 5678).
+            ssl (bool): Whether the advertised service uses TLS; influences advertised scheme (default False).
+            service_type (str): Service type identifier used for discovery (default "HiveMind-websocket").
+            name (str): Human-readable node name published by the beacon (default "HiveMind-Node").
+        
+        Notes:
+            Initializes internal node registry, creates and assigns the BeaconAnnounce instance, and sets the running flag to False.
+        """
+        self._nodes = {}
         self.beacon = None
         self._init_beacon(name=name)
         self.running = False
