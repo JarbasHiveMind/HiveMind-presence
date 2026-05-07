@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.0.3a3](https://github.com/JarbasHiveMind/HiveMind-presence/tree/0.0.3a3) (2026-05-07)
+
+[Full Changelog](https://github.com/JarbasHiveMind/HiveMind-presence/compare/V0.0.3a2...0.0.3a3)
+
+**Merged pull requests:**
+
+- feat\(tests\): hivescope e2e suite + CI [\#7](https://github.com/JarbasHiveMind/HiveMind-presence/pull/7) ([JarbasAl](https://github.com/JarbasAl))
+
+## [V0.0.3a2](https://github.com/JarbasHiveMind/HiveMind-presence/tree/V0.0.3a2) (2023-10-26)
+
+[Full Changelog](https://github.com/JarbasHiveMind/HiveMind-presence/compare/V0.0.2a4...V0.0.3a2)
+
 ## [V0.0.2a4](https://github.com/JarbasHiveMind/HiveMind-presence/tree/V0.0.2a4) (2023-08-03)
 
 [Full Changelog](https://github.com/JarbasHiveMind/HiveMind-presence/compare/d76d9fd6a8f4afd4fa41133668f81d2fa92ae624...V0.0.2a4)
