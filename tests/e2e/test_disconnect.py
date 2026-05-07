@@ -5,8 +5,8 @@ from hivescope.scenarios import three_satellites
 
 def test_presence_cleared_after_disconnect():
     b = three_satellites()
-    b.start_all()
     try:
+        b.start_all()
         m = b.get_master("M0")
         assert len(m.connected_peers()) == 3
 
@@ -21,8 +21,8 @@ def test_presence_cleared_after_disconnect():
 
 def test_all_disconnect_clears_master():
     b = three_satellites()
-    b.start_all()
     try:
+        b.start_all()
         m = b.get_master("M0")
         for i in range(3):
             b.get_satellite(f"S{i}").disconnect()
