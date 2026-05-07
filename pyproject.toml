@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hivemind-presence"
+dynamic = ["version"]
+description = "Presence detection for HiveMind mesh network"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+dependencies = [
+    "upnpclient>=0.0.8",
+    "hivemind_bus_client>=0.7.0a2",
+    "rich",
+]
+
+[project.scripts]
+hivemind-presence = "hivemind_presence.scripts:hmpresence_cmds"
+
+[tool.setuptools]
+packages = ["hivemind_presence"]
+include-package-data = true
+
+[tool.setuptools.dynamic]
+version = {attr = "hivemind_presence.version.__version__"}
