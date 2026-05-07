@@ -11,7 +11,7 @@ jobs:
     secrets: inherit
     with:
       python_version: '3.11'
-      coverage_source: 'HiveMind_presence'
-      test_path: 'test/'
+      coverage_source: 'hivemind_presence'
+      test_path: 'tests/'
       install_extras: ''
       min_coverage: 0
