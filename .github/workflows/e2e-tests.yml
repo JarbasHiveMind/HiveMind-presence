@@ -1,0 +1,22 @@
+name: E2E Tests
+
+on:
+  pull_request:
+    branches: [dev, master]
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install package
+        run: pip install .
+      - name: Install hivescope
+        run: pip install "git+https://github.com/JarbasHiveMind/hivescope@dev"
+      - name: Run E2E Tests
+        run: pytest tests/e2e/ -v
