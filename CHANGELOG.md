@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.3a4](https://github.com/JarbasHiveMind/HiveMind-presence/tree/0.0.3a4) (2026-06-05)
+
+[Full Changelog](https://github.com/JarbasHiveMind/HiveMind-presence/compare/0.0.3a3...0.0.3a4)
+
+**Merged pull requests:**
+
+- docs: zero-to-hero README and docs/ [\#9](https://github.com/JarbasHiveMind/HiveMind-presence/pull/9) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.0.3a3](https://github.com/JarbasHiveMind/HiveMind-presence/tree/0.0.3a3) (2026-05-07)
 
 [Full Changelog](https://github.com/JarbasHiveMind/HiveMind-presence/compare/V0.0.3a2...0.0.3a3)
