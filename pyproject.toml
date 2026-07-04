@@ -15,6 +15,17 @@ dependencies = [
     "rich",
 ]
 
+[project.optional-dependencies]
+# The e2e suite (tests/e2e/) drives connection-presence through an in-process
+# hivescope hive. hivescope is published; the prerelease floor below lets a
+# plain `pip install .[test]` resolve the 2.x hivemind stack with no --pre
+# (PEP 440: a prerelease floor opts that package into prereleases).
+test = [
+    "pytest",
+    "hivescope>=0.5.2a1",
+    "ovos-bus-client>=2.0.0a3,<3.0.0",
+]
+
 [project.scripts]
 hivemind-presence = "hivemind_presence.scripts:hmpresence_cmds"
 

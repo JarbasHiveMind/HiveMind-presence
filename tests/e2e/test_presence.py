@@ -1,6 +1,5 @@
 """E2E tests for HiveMind presence tracking."""
 
-from hivescope import TopologyBuilder
 from hivescope.scenarios import three_satellites
 from hivescope.assertions import assert_client_registered
 

@@ -1,11 +1,7 @@
 """Top-level conftest.
 
-Loads hivescope's pytest plugin only when hivescope is importable, so unit/
-coverage workflows that don't install hivescope can still run without
-loading the e2e fixtures.
+hivescope ships the e2e fixtures and is a declared test dependency
+(the [test] extra) — loaded unconditionally so a missing install fails
+loudly instead of silently skipping the e2e suite.
 """
-try:
-    import hivescope  # noqa: F401
-    pytest_plugins = ["hivescope.pytest_fixtures"]
-except ImportError:
-    pass
+pytest_plugins = ["hivescope.pytest_fixtures"]
