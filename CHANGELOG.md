@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.3a6](https://github.com/JarbasHiveMind/HiveMind-presence/tree/0.0.3a6) (2026-07-05)
+
+[Full Changelog](https://github.com/JarbasHiveMind/HiveMind-presence/compare/0.0.3a5...0.0.3a6)
+
+**Merged pull requests:**
+
+- test: real zeroconf advertise\<-\>discover e2e \(LAN discovery coverage\) [\#13](https://github.com/JarbasHiveMind/HiveMind-presence/pull/13) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.0.3a5](https://github.com/JarbasHiveMind/HiveMind-presence/tree/0.0.3a5) (2026-07-04)
 
 [Full Changelog](https://github.com/JarbasHiveMind/HiveMind-presence/compare/0.0.3a4...0.0.3a5)
