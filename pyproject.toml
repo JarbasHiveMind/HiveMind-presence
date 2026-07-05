@@ -24,6 +24,9 @@ test = [
     "pytest",
     "hivescope>=0.5.2a1",
     "ovos-bus-client>=2.0.0a3,<3.0.0",
+    # zeroconf drives the real advertise<->discover e2e (tests/e2e/test_discovery.py);
+    # it is an optional (LGPL) transport for end users but required to exercise it.
+    "zeroconf",
 ]
 
 [project.scripts]
