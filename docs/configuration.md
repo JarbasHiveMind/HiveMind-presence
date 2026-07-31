@@ -10,7 +10,7 @@ Advertise this node on the LAN.
 | --- | --- | --- | --- |
 | `--port` | int | `5678` | HiveMind WebSocket port to advertise. |
 | `--name` | str | `HiveMind-Node` | Friendly device name shown to scanners. |
-| `--service-type` | str | `HiveMind-websocket` | Service identifier; must match the scanner's value. |
+| `--service-type` | str | `HiveMind-websocket` | Service identifier. Must match the scanner's value. |
 | `--zeroconf` | bool | `true` | Advertise via mDNS/Zeroconf. |
 | `--upnp` | bool | `false` | Advertise via UPnP/SSDP. |
 | `--ssl` | bool | `false` | Report SSL support (scanners connect with `wss://`). |
@@ -61,10 +61,10 @@ Raises `ValueError` if both transports are disabled.
 
 Key members:
 
-- `on_new_node(node)` — assign a callback to react to each discovered node.
-- `scan(timeout=25)` — generator yielding each newly discovered `HiveMindNode`
-  once, until `timeout` seconds elapse.
-- `nodes` — dict of `host:port` → `HiveMindNode` seen so far.
+- `on_new_node(node)`: assign a callback to react to each discovered node.
+- `scan(timeout=25)`: a generator that yields each newly discovered
+  `HiveMindNode` once, until `timeout` seconds elapse.
+- `nodes`: a dict of `host:port` to `HiveMindNode`, for nodes seen so far.
 - `start()` / `stop()`.
 
 ### `HiveMindNode`
@@ -79,3 +79,6 @@ HiveMindNode.connect(key, crypto_key=None, self_signed=True,
 
 Opens a `HiveMessageBusClient` to the node (`wss://` if the node advertised SSL,
 else `ws://`), runs it in a thread, and returns the bus.
+
+---
+[← How it works](how-it-works.md) · [Home](index.md) · [Examples →](examples.md)

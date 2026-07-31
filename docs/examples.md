@@ -63,3 +63,6 @@ disc.stop()
 hivemind-presence announce --name kitchen --upnp true
 hivemind-presence scan --upnp true
 ```
+
+---
+[← Configuration](configuration.md) · [Home](index.md)
