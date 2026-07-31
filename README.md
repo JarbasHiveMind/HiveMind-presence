@@ -6,21 +6,21 @@ without being told its IP address, and a satellite **scans** the LAN to discover
 reachable hubs.
 
 It sits next to [hivemind-core](https://github.com/JarbasHiveMind/HiveMind-core)
-(the hub) and the client libraries: the hub advertises its WebSocket address with
-`hivemind-presence announce`, and a client uses `hivemind-presence scan` (or the
+(the hub) and the client libraries. The hub advertises its WebSocket address with
+`hivemind-presence announce`. A client uses `hivemind-presence scan` (or the
 `LocalDiscovery` API) to locate it and open a connection.
 
 ## Discovery transports
 
-- **mDNS / Zeroconf** — multicast DNS service discovery. Optional dependency
-  (`zeroconf` is LGPL and imported lazily); install it to enable mDNS.
-- **UPnP / SSDP** — an SSDP server advertises a UPnP device descriptor; the
+- **mDNS / Zeroconf**: multicast DNS service discovery. The optional
+  `zeroconf` dependency is LGPL and imported lazily. Install it to enable mDNS.
+- **UPnP / SSDP**: an SSDP server advertises a UPnP device descriptor. The
   scanner discovers it over SSDP.
 
-The roadmap moves the default to **HiveBeacon** — a zero-dependency UDP broadcast
-beacon absorbed from the archived `HiveBeacon` project — with mDNS kept as an
-optional transport. UPnP is being retired. Until the beacon transport ships, mDNS
-and UPnP are the available transports.
+The roadmap moves the default transport to **HiveBeacon**, a zero-dependency UDP
+broadcast beacon absorbed from the archived `HiveBeacon` project, and keeps mDNS
+as an optional transport. UPnP is being retired. Until the beacon transport
+ships, mDNS and UPnP are the available transports.
 
 ## Prerequisites
 
@@ -117,17 +117,17 @@ discovered hub.
 | `--upnp` | `false` | Use the UPnP/SSDP transport. |
 | `--ssl` | `false` | Advertise SSL support (announce only). |
 
-At least one transport must be enabled for `scan`; `LocalDiscovery` raises if both
-are disabled.
+At least one transport must be enabled for `scan`. `LocalDiscovery` raises an
+error if both are disabled.
 
 ## Documentation
 
 See [`docs/`](docs/index.md):
 
-- [How it works](docs/how-it-works.md) — announce/scan flow and the transports.
-- [Configuration reference](docs/configuration.md) — every CLI option and API
+- [How it works](docs/how-it-works.md): the announce/scan flow and the transports.
+- [Configuration reference](docs/configuration.md): every CLI option and API
   argument.
-- [Examples](docs/examples.md) — discover-then-connect, hub announce loop.
+- [Examples](docs/examples.md): discover-then-connect, hub announce loop.
 
 ## License
 
