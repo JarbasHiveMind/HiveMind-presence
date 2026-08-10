@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.4a1](https://github.com/JarbasHiveMind/HiveMind-presence/tree/0.0.4a1) (2026-08-10)
+
+[Full Changelog](https://github.com/JarbasHiveMind/HiveMind-presence/compare/0.0.3a7...0.0.4a1)
+
+**Merged pull requests:**
+
+- fix\(ci\): stop passing a bare extras name as pip arguments [\#18](https://github.com/JarbasHiveMind/HiveMind-presence/pull/18) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.0.3a7](https://github.com/JarbasHiveMind/HiveMind-presence/tree/0.0.3a7) (2026-07-31)
 
 [Full Changelog](https://github.com/JarbasHiveMind/HiveMind-presence/compare/0.0.3a6...0.0.3a7)
