@@ -31,7 +31,7 @@ Discover nodes on the LAN and print them in a table.
 
 ```python
 LocalPresence(port=5678, ssl=False, service_type="HiveMind-websocket",
-              name="HiveMind-Node", upnp=True, zeroconf=True)
+              name="HiveMind-Node", upnp=False, zeroconf=True)
 ```
 
 | Argument | Default | Description |
@@ -40,7 +40,7 @@ LocalPresence(port=5678, ssl=False, service_type="HiveMind-websocket",
 | `ssl` | `False` | Advertise SSL support. |
 | `service_type` | `HiveMind-websocket` | Service identifier. |
 | `name` | `HiveMind-Node` | Friendly device name. |
-| `upnp` | `True` | Enable the UPnP transport. |
+| `upnp` | `False` | Enable the UPnP transport. |
 | `zeroconf` | `True` | Enable the mDNS transport (no-op if `zeroconf` is not installed). |
 
 Methods: `start()`, `stop()`.

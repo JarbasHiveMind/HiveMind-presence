@@ -9,6 +9,11 @@ from hivemind_presence.presence import LocalPresence
 from hivemind_presence.discovery import LocalDiscovery
 
 
+def test_presence_defaults_to_no_upnp():
+    p = LocalPresence()
+    assert p.upnp is None
+
+
 def test_presence_zeroconf_only_has_no_upnp():
     p = LocalPresence(upnp=False, zeroconf=True)
     assert p.upnp is None
