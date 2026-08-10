@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.5a1](https://github.com/JarbasHiveMind/HiveMind-presence/tree/0.0.5a1) (2026-08-10)
+
+[Full Changelog](https://github.com/JarbasHiveMind/HiveMind-presence/compare/0.0.4a1...0.0.5a1)
+
+**Merged pull requests:**
+
+- fix: LocalPresence defaults SSDP/UPnP off per DISCOVERY-1 §2.2 [\#17](https://github.com/JarbasHiveMind/HiveMind-presence/pull/17) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.0.4a1](https://github.com/JarbasHiveMind/HiveMind-presence/tree/0.0.4a1) (2026-08-10)
 
 [Full Changelog](https://github.com/JarbasHiveMind/HiveMind-presence/compare/0.0.3a7...0.0.4a1)
