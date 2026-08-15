@@ -1,0 +1,23 @@
+name: Code Coverage
+
+on:
+  pull_request:
+    branches: [dev]
+  workflow_dispatch:
+
+jobs:
+  coverage:
+    uses: OpenVoiceOS/gh-automations/.github/workflows/coverage.yml@dev
+    with:
+      python_version: '3.11'
+      coverage_source: 'hivemind_presence'
+      test_path: 'tests/'
+      # Name the extra explicitly. `install_extras` is a list of pip
+      # *arguments*, so passing a bare 'test' there ran `pip install test`
+      # and looked for a PyPI package by that name. `test_extras` is the
+      # extras key, which is what this repo actually needs: the default
+      # PRIMARY of 'dev' does not exist here, and `pip install -e .[dev]`
+      # succeeds anyway on an unknown extra, so the workflow never fell
+      # back to [test] and pytest ran without hivescope.
+      test_extras: 'test'
+      min_coverage: 0
