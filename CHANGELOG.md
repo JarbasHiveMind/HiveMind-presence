@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.5a3](https://github.com/JarbasHiveMind/HiveMind-presence/tree/0.0.5a3) (2026-08-15)
+
+[Full Changelog](https://github.com/JarbasHiveMind/HiveMind-presence/compare/0.0.5a2...0.0.5a3)
+
+**Merged pull requests:**
+
+- docs: add AGENTS.md with per-repo agent conventions [\#24](https://github.com/JarbasHiveMind/HiveMind-presence/pull/24) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.0.5a2](https://github.com/JarbasHiveMind/HiveMind-presence/tree/0.0.5a2) (2026-08-10)
 
 [Full Changelog](https://github.com/JarbasHiveMind/HiveMind-presence/compare/0.0.5a1...0.0.5a2)
