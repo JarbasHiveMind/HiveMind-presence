@@ -1,0 +1,16 @@
+name: Build Tests
+
+on:
+  pull_request:
+    branches: [dev, master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: OpenVoiceOS/gh-automations/.github/workflows/build-tests.yml@dev
+    with:
+      # 3.14 dropped: the [test] extra pulls the full hivemind-core 2.x stack
+      # for the hivescope e2e suite; align with hivemind-core's matrix.
+      python_versions: '["3.10", "3.11", "3.12", "3.13"]'
+      install_extras: 'test'
+      test_path: 'tests/'
