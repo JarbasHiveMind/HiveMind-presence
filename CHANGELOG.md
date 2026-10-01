@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.6a1](https://github.com/JarbasHiveMind/HiveMind-presence/tree/0.0.6a1) (2026-10-01)
+
+[Full Changelog](https://github.com/JarbasHiveMind/HiveMind-presence/compare/0.0.5a3...0.0.6a1)
+
+**Merged pull requests:**
+
+- fix\(tests\): load the fixtures through addopts, not a root conftest [\#26](https://github.com/JarbasHiveMind/HiveMind-presence/pull/26) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [0.0.5a3](https://github.com/JarbasHiveMind/HiveMind-presence/tree/0.0.5a3) (2026-08-15)
 
 [Full Changelog](https://github.com/JarbasHiveMind/HiveMind-presence/compare/0.0.5a2...0.0.5a3)
