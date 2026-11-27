@@ -4,7 +4,7 @@ from hivemind_presence.upnp_server import UPNPAnnounce
 class LocalPresence:
     def __init__(self, port=5678, ssl=False,
                  service_type="HiveMind-websocket",
-                 name="HiveMind-Node", upnp=True, zeroconf=True):
+                 name="HiveMind-Node", upnp=False, zeroconf=True):
         self._nodes = {}
         self.upnp = None
         self.zero = None
