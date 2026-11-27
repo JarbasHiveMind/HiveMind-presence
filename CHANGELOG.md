@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.7a1](https://github.com/JarbasHiveMind/HiveMind-presence/tree/0.0.7a1) (2026-11-27)
+
+[Full Changelog](https://github.com/JarbasHiveMind/HiveMind-presence/compare/0.0.6a1...0.0.7a1)
+
+**Merged pull requests:**
+
+- fix: a discovered node connects with a named identity [\#29](https://github.com/JarbasHiveMind/HiveMind-presence/pull/29) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [0.0.6a1](https://github.com/JarbasHiveMind/HiveMind-presence/tree/0.0.6a1) (2026-10-01)
 
 [Full Changelog](https://github.com/JarbasHiveMind/HiveMind-presence/compare/0.0.5a3...0.0.6a1)
