@@ -1,0 +1,2 @@
+[console_scripts]
+hivemind-presence = hivemind_presence.scripts:hmpresence_cmds

@@ -1,6 +1,7 @@
 from uuid import uuid4
 
 from hivemind_bus_client import HiveMessageBusClient
+from hivemind_bus_client.identity import NodeIdentity
 
 
 class AbstractDevice:
@@ -59,7 +60,7 @@ class HiveMindNode:
         return self.device.ssl
 
     def connect(self, key, crypto_key=None, self_signed=True,
-                useragent="HiveMind-websocket-client"):
+                useragent="HiveMind-websocket-client", identity=None):
         if self.ssl:
             host = f"wss://{self.host}"
         else:
@@ -68,6 +69,7 @@ class HiveMindNode:
                                    crypto_key=crypto_key,
                                    host=host, port=self.port,
                                    useragent=useragent,
-                                   self_signed=self_signed)
+                                   self_signed=self_signed,
+                                   identity=identity or NodeIdentity(app_name="hivemind-presence"))
         bus.run_in_thread()
         return bus
